@@ -21,6 +21,10 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 ## New things learnt
 The naming of a new component should start with an upper case letter, but inside the pages (which are the routes) we use a lower case letter.
 
+`index.js` is the homepage.
+
+`_api.js` is where everything starts. At the point `return <Component {...pageProps} />` is where routing starts. Alot can also be done before this done e.g. interaction with the server (checking if the user is logged in, ...)
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
