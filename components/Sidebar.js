@@ -3,8 +3,18 @@ import styled from "styled-components";
 import ChatIcon from "@mui/icons-material/Chat";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
+import * as EmailValidator from "email-validator";
 
 function Sidebar() {
+    const onCreateChat = () => {
+        const input = prompt('Please enter an emaill adderss for the user you wish to chat with.')
+
+        if (!input) return false
+
+        if(EmailValidator.validate(input)){
+            // we add the chat into the DB
+        }
+    }
   return (
     <Container>
       <Header>
@@ -22,7 +32,7 @@ function Sidebar() {
         <SearchIcon />
         <SearchInput placeholder="Search in chats" />
       </Search>
-      <SidebarButton>Start a new chat</SidebarButton>
+      <SidebarButton onClick={onCreateChat}>Start a new chat</SidebarButton>
       {/** List of chats */}
     </Container>
   );
