@@ -25,6 +25,8 @@ The naming of a new component should start with an upper case letter, but inside
 
 `_api.js` is where everything starts. At the point `return <Component {...pageProps} />` is where routing starts. Alot can also be done before this done e.g. interaction with the server (checking if the user is logged in, ...)
 
+`NB:` Referecing files and folders without considering their cases can slow or disable the hot reloading during delolopemnt. Make sure you reference the files and folders in their correct casing.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
