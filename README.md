@@ -19,6 +19,7 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 ## New things learnt
+
 The naming of a new component should start with an upper case letter, but inside the pages (which are the routes) we use a lower case letter.
 
 `index.js` is the homepage.
