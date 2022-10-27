@@ -8,6 +8,7 @@ import {
   collection,
   serverTimestamp,
   query,
+  where,
   orderBy,
   onSnapshot,
 } from "firebase/firestore";
@@ -35,4 +36,4 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export { db, auth, provider, signInWithPopup, doc, setDoc,serverTimestamp, signOut };
+export { db, auth, provider, collection, signInWithPopup, doc,addDoc, setDoc,serverTimestamp, query, where, signOut };
