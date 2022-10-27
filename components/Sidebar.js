@@ -7,6 +7,9 @@ import * as EmailValidator from "email-validator";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 
+
+import { query } from "firebase/database";
+import Chat from "./Chat";
 import {
   addDoc,
   auth,
@@ -15,16 +18,15 @@ import {
   signOut,
   where,
 } from "../services/firebase";
-import { query } from "firebase/database";
 
 function Sidebar() {
   const [user] = useAuthState(auth);
-  // const userChatRef = collection(db, 'chats');
+
   const userChatRef = query(
     collection(db, "chats"),
     where("users", "array-contains", user.email)
   );
-  const [chatSnapshot] = useCollection(userChatRef);
+  const [chatsSnapshot] = useCollection(userChatRef);
 
   const onCreateChat = () => {
     const input = prompt(
@@ -46,7 +48,7 @@ function Sidebar() {
   };
 
   const chatAlreadyExists = (reciepientEmail) =>
-    !!chatSnapshot?.docs.find(
+    !!chatsSnapshot?.docs.find(
       (chat) =>
         chat.data().users.find((user) => user === reciepientEmail)?.length > 0
     );
@@ -54,7 +56,7 @@ function Sidebar() {
   return (
     <Container>
       <Header>
-        <UserAvatar onClick={() => signOut(auth)} />
+        <UserAvatar src={user.photoURL} onClick={() => signOut(auth)} />
         <IconsContainer>
           <IconButton>
             <ChatIcon />
@@ -69,7 +71,9 @@ function Sidebar() {
         <SearchInput placeholder="Search in chats" />
       </Search>
       <SidebarButton onClick={onCreateChat}>Start a new chat</SidebarButton>
-      {/** List of chats */}
+      {chatsSnapshot?.docs.map(chat => (
+        <Chat key={chat.id} id={chat.id} users={chat.data().users} />
+      ))}
     </Container>
   );
 }
