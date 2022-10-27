@@ -20,6 +20,8 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 ## New things learnt
 
+[Tabnine](https://www.tabnine.com/install/vscode) a great autocomplete extension.
+
 The naming of a new component should start with an upper case letter, but inside the pages (which are the routes) we use a lower case letter.
 
 `index.js` is the homepage.
