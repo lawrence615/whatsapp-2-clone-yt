@@ -28,6 +28,23 @@ The naming of a new component should start with an upper case letter, but inside
 
 `NB:` Referecing files and folders without considering their cases can slow or disable the hot reloading during delolopemnt. Make sure you reference the files and folders in their correct casing.
 
+`!!` this is known as "double bang" used to convert something as TRUE or FALSE. Values that are associated with boolean true are said to be truthy. Values that are associated with boolean false values are said to be falsy.
+
+#### Truthy values:
+- Object: {}
+- Array: []
+- Not empty string: "anything"
+- Number other than zero: 3.14
+- Date: new Date();
+
+#### Falsy values:
+- Empty string: ""
+- 0
+- null
+- undefined
+- NaN and the list of falsy values below.
+
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
