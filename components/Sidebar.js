@@ -4,23 +4,57 @@ import ChatIcon from "@mui/icons-material/Chat";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
 import * as EmailValidator from "email-validator";
-import { signOut } from "firebase/auth";
-import { auth } from "../services/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollection } from "react-firebase-hooks/firestore";
+
+import {
+  addDoc,
+  auth,
+  collection,
+  db,
+  signOut,
+  where,
+} from "../services/firebase";
+import { query } from "firebase/database";
 
 function Sidebar() {
-    const onCreateChat = () => {
-        const input = prompt('Please enter an emaill adderss for the user you wish to chat with.')
+  const [user] = useAuthState(auth);
+  // const userChatRef = collection(db, 'chats');
+  const userChatRef = query(
+    collection(db, "chats"),
+    where("users", "array-contains", user.email)
+  );
+  const [chatSnapshot] = useCollection(userChatRef);
 
-        if (!input) return false
+  const onCreateChat = () => {
+    const input = prompt(
+      "Please enter an emaill adderss for the user you wish to chat with."
+    );
 
-        if(EmailValidator.validate(input)){
-            // we add the chat into the DB
-        }
+    if (!input) return false;
+
+    if (
+      EmailValidator.validate(input) &&
+      !chatAlreadyExists(input) &&
+      input !== user.email
+    ) {
+      // Add a chat into the DB 'chats' collection if it doestn't already exist and is valid.
+      addDoc(collection(db, "chats"), {
+        users: [user.email, input],
+      });
     }
+  };
+
+  const chatAlreadyExists = (reciepientEmail) =>
+    !!chatSnapshot?.docs.find(
+      (chat) =>
+        chat.data().users.find((user) => user === reciepientEmail)?.length > 0
+    );
+
   return (
     <Container>
       <Header>
-        <UserAvatar onClick={()=> signOut(auth)} />
+        <UserAvatar onClick={() => signOut(auth)} />
         <IconsContainer>
           <IconButton>
             <ChatIcon />
