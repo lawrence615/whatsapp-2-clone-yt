@@ -21,6 +21,7 @@ import {
   serverTimestamp,
   setDoc,
 } from "../services/firebase";
+import getRecipientEmail from "../utils/getRecipientEmail";
 
 function ChatScreen({ chat, messages }) {
   const [user] = useAuthState(auth);
@@ -81,12 +82,14 @@ function ChatScreen({ chat, messages }) {
     setInput("");
   };
 
+  const reciepientEmail = getRecipientEmail(chat.users, user)
+
   return (
     <Container>
       <Header>
         <Avatar />
         <HeaderInformation>
-          <h3>Recipient Email</h3>
+          <h3>{reciepientEmail}</h3>
           <p>Last seen...</p>
         </HeaderInformation>
         <HeaderIcons>
