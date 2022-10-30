@@ -5,21 +5,27 @@ import { Avatar, IconButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
-import MicIcon from '@mui/icons-material/Mic';
+import MicIcon from "@mui/icons-material/Mic";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { useState } from "react";
 
 import Message from "./Message";
 import {
+  addDoc,
   auth,
   collection,
   db,
   doc,
   orderBy,
   query,
+  serverTimestamp,
+  setDoc,
 } from "../services/firebase";
 
 function ChatScreen({ chat, messages }) {
   const [user] = useAuthState(auth);
+  const [input, setInput] = useState("");
+
   const router = useRouter();
   const [messagesSnashot] = useCollection(
     query(
@@ -40,7 +46,39 @@ function ChatScreen({ chat, messages }) {
           }}
         />
       ));
+    } else {
+      return JSON.parse(messages).map((message) => (
+        <Message key={message.id} user={message.user} message={message} />
+      ));
     }
+  };
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    if (input.trim() === "") {
+      return;
+    }
+
+    /** update last seen... */
+    const userRef = doc(db, "users/" + user.uid);
+    setDoc(
+      userRef,
+      {
+        lastSeen: serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    /** post message */
+    addDoc(collection(doc(db, "chats", router.query.id), "messages"), {
+      timestamp: serverTimestamp(),
+      message: input,
+      user: user.email,
+      photoURL: user.photoURL,
+    });
+
+    /** reset input */
+    setInput("");
   };
 
   return (
@@ -66,8 +104,11 @@ function ChatScreen({ chat, messages }) {
       </MessageContainer>
       <InputContainer>
         <InsertEmoticonIcon />
-        <Input />
-        <MicIcon/>
+        <Input value={input} onChange={(e) => setInput(e.target.value)} />
+        <button hidden disabled={!input} type="submit" onClick={sendMessage}>
+          Send Message
+        </button>
+        <MicIcon />
       </InputContainer>
     </Container>
   );
@@ -105,7 +146,11 @@ const HeaderInformation = styled.div`
 
 const HeaderIcons = styled.div``;
 
-const MessageContainer = styled.div``;
+const MessageContainer = styled.div`
+  padding: 30px;
+  background-color: #e5ded8;
+  min-height: 90vh;
+`;
 
 const EndOfMessage = styled.div``;
 
@@ -122,7 +167,7 @@ const InputContainer = styled.form`
 const Input = styled.input`
   flex: 1;
   outline: 0;
-  border:none;
+  border: none;
   border-radius: 10px;
   background-color: whitesmoke;
   padding: 20px;
