@@ -5,6 +5,7 @@ import {
   addDoc,
   setDoc,
   getDoc,
+  getDocs,
   collection,
   serverTimestamp,
   query,
@@ -36,4 +37,4 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-export { db, auth, provider, collection, signInWithPopup, doc,addDoc, setDoc,serverTimestamp, query, where, signOut };
+export { db, auth, provider, collection, signInWithPopup, doc,addDoc, setDoc, getDoc, getDocs, serverTimestamp, query, where, signOut };
