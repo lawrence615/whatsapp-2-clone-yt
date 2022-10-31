@@ -7,8 +7,8 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import MicIcon from "@mui/icons-material/Mic";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { useState } from "react";
-import TimeAgo from "timeago-react"
+import { useRef, useState } from "react";
+import TimeAgo from "timeago-react";
 
 import Message from "./Message";
 import {
@@ -28,7 +28,7 @@ import getRecipientEmail from "../utils/getRecipientEmail";
 function ChatScreen({ chat, messages }) {
   const [user] = useAuthState(auth);
   const [input, setInput] = useState("");
-
+  const endOfMessageRef = useRef(null);
   const router = useRouter();
   const [messagesSnashot] = useCollection(
     query(
@@ -89,6 +89,16 @@ function ChatScreen({ chat, messages }) {
 
     /** reset input */
     setInput("");
+
+    /** scroll to the bottom */
+    scrollToBottom();
+  };
+
+  const scrollToBottom = () => {
+    endOfMessageRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const recipient = recipientSnapshot?.docs?.[0]?.data();
@@ -105,12 +115,15 @@ function ChatScreen({ chat, messages }) {
         <HeaderInformation>
           <h3>{recipientEmail}</h3>
           {recipientSnapshot ? (
-            <p>Last active: {' '}
-            {recipient?.lastSeen?.toDate() ? (
-            <TimeAgo datetime={recipient?.lastSeen?.toDate()}/>
-            ) : "Unavailable"}
+            <p>
+              Last active:{" "}
+              {recipient?.lastSeen?.toDate() ? (
+                <TimeAgo datetime={recipient?.lastSeen?.toDate()} />
+              ) : (
+                "Unavailable"
+              )}
             </p>
-          ): (
+          ) : (
             <p>Loading last active...</p>
           )}
         </HeaderInformation>
@@ -125,7 +138,7 @@ function ChatScreen({ chat, messages }) {
       </Header>
       <MessageContainer>
         {showMessages()}
-        <EndOfMessage />
+        <EndOfMessage ref={endOfMessageRef} />
       </MessageContainer>
       <InputContainer>
         <InsertEmoticonIcon />
@@ -177,7 +190,9 @@ const MessageContainer = styled.div`
   min-height: 90vh;
 `;
 
-const EndOfMessage = styled.div``;
+const EndOfMessage = styled.div`
+  margin-bottom: 50px;
+`;
 
 const InputContainer = styled.form`
   display: flex;
