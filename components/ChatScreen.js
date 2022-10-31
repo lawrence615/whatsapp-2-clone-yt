@@ -8,6 +8,7 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import MicIcon from "@mui/icons-material/Mic";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { useState } from "react";
+import TimeAgo from "timeago-react"
 
 import Message from "./Message";
 import {
@@ -20,6 +21,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  where,
 } from "../services/firebase";
 import getRecipientEmail from "../utils/getRecipientEmail";
 
@@ -32,6 +34,13 @@ function ChatScreen({ chat, messages }) {
     query(
       collection(doc(db, "chats", router.query.id), "messages"),
       orderBy("timestamp", "asc")
+    )
+  );
+
+  const [recipientSnapshot] = useCollection(
+    query(
+      collection(db, "users"),
+      where("email", "==", getRecipientEmail(chat.users, user))
     )
   );
 
@@ -82,15 +91,28 @@ function ChatScreen({ chat, messages }) {
     setInput("");
   };
 
-  const reciepientEmail = getRecipientEmail(chat.users, user)
+  const recipient = recipientSnapshot?.docs?.[0]?.data();
+  const recipientEmail = getRecipientEmail(chat.users, user);
 
   return (
     <Container>
       <Header>
-        <Avatar />
+        {recipient ? (
+          <Avatar src={recipient?.photoURL} />
+        ) : (
+          <Avatar>{recipientEmail[0]}</Avatar>
+        )}
         <HeaderInformation>
-          <h3>{reciepientEmail}</h3>
-          <p>Last seen...</p>
+          <h3>{recipientEmail}</h3>
+          {recipientSnapshot ? (
+            <p>Last active: {' '}
+            {recipient?.lastSeen?.toDate() ? (
+            <TimeAgo datetime={recipient?.lastSeen?.toDate()}/>
+            ) : "Unavailable"}
+            </p>
+          ): (
+            <p>Loading last active...</p>
+          )}
         </HeaderInformation>
         <HeaderIcons>
           <IconButton>
